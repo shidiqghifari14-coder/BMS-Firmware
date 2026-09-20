@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ARJUNA — BMS Command</title>
+  <meta name="description" content="Pusat monitoring BMS ARJUNA: 140 sel seri, SOC, energi, temperatur, balancing, dan diagnostik pack.">
+  <meta name="theme-color" content="#080e18">
+  <link rel="icon" type="image/jpeg" href="./assets/arjuna-emblem.jpeg">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./team.css">
+</head>
+<body>
+<a class="skip" href="#main">Lewati navigasi</a>
+<aside class="sidebar">
+  <a class="brand" href="#overview" aria-label="ARJUNA Electric Vehicle Team"><img src="./assets/arjuna-wordmark.png" alt="ARJUNA Electric Vehicle Team" width="610" height="283"></a>
+  <div class="workspace-label">BATTERY MANAGEMENT</div>
+  <div class="pack-id"><img class="pack-emblem" src="./assets/arjuna-emblem.jpeg" alt="" width="44" height="44"><div>BMS utama<small>140S · BMS COMMAND</small></div></div>
+  <div class="nav-label">MONITORING</div>
+  <nav aria-label="Navigasi utama">
+    <button data-view="overview" data-short="Ringkas" class="nav-item active"><span>01</span>Ringkasan</button>
+    <button data-view="cells" data-short="Sel" class="nav-item"><span>02</span>Sel baterai</button>
+    <button data-view="trends" data-short="Grafik" class="nav-item"><span>03</span>Grafik telemetry</button>
+    <button data-view="energy" data-short="SOC" class="nav-item"><span>03</span>SOC & energi</button>
+    <button data-view="thermal" data-short="Suhu" class="nav-item"><span>04</span>Temperatur</button>
+    <button data-view="diagnostics" data-short="Diagnosa" class="nav-item"><span>05</span>Diagnostik<span id="faultBadge" class="fault-count">0</span></button>
+    <button data-view="logging" data-short="Rekam" class="nav-item"><span>06</span>Perekaman</button>
+    <button data-view="guide" data-short="Panduan" class="nav-item"><span>07</span>Panduan</button>
+  </nav>
+  <div class="sidebar-bottom"><div class="source-box"><span class="dot amber"></span><b id="sideSource">Demo telemetry</b><p id="sourceDescription">Eksplorasi tanpa hardware</p><button class="text-button" id="sourceButton">Atur sumber data <span>↗</span></button></div><div class="side-footer"><img src="./assets/arjuna-emblem.jpeg" alt="" width="28" height="28"><span>ARJUNA ENGINEERING<small>Battery management system</small></span></div></div>
+</aside>
+<div class="workspace">
+  <header class="topbar"><div class="breadcrumb">ARJUNA <span>/</span> <b>Main BMS</b></div><div class="header-actions"><span class="connection-label" id="connectionLabel"><i class="dot amber"></i>DEMO</span><span class="clock" id="clock">--:--:--</span><button class="button small" id="connectButton">Koneksi</button></div></header>
+  <main id="main">
+    <section class="page-heading"><div><div class="eyebrow">140 SEL SERI / ARJUNA BMS</div><h1 id="pageTitle">Ringkasan pack</h1><p id="pageSubtitle">Seluruh kondisi baterai, dalam satu pandangan.</p></div><div class="heading-actions"><label class="scenario-select"><span class="sr-only">Skenario demo</span><select id="scenario"><option value="drive">Demo · Discharge</option><option value="balance">Demo · Balancing</option><option value="imbalance">Demo · Cell deviation</option><option value="thermal">Demo · Overtemperature</option><option value="comms">Demo · Fault komunikasi</option><option value="offline">Demo · Connection loss</option></select></label><button class="button" id="exportButton">Snapshot sel</button></div></section>
+    <div class="status-ribbon" id="statusRibbon"><span id="statusIcon" class="status-icon">✓</span><div><b id="packStatus">Demo berjalan normal</b><span id="statusDetail">Menampilkan data simulasi · belum terhubung ke BMS</span></div><span class="sample-label" id="sampleAge">DEMO</span></div>
+    <section class="metrics" aria-label="Ringkasan pack">
+      <article class="metric"><div class="metric-label">TEGANGAN PACK</div><div class="metric-value" id="packVoltage">—<small> V</small></div><div class="metric-bottom"><span id="validCount">140 / 140 cells</span></div></article>
+      <article class="metric"><div class="metric-label">ARUS PACK</div><div class="metric-value" id="packCurrent">—<small> A</small></div><div class="metric-bottom"><span id="currentDirection">Discharging</span><span id="packPower" class="accent-text">— kW</span></div></article>
+      <article class="metric"><div class="metric-label">SELISIH SEL</div><div class="metric-value" id="cellDelta">—<small> mV</small></div><div class="metric-bottom"><span id="cellExtrema">C000 → C000</span><span class="muted">max − min</span></div></article>
+      <article class="metric"><div class="metric-label">SUHU MAKSIMUM</div><div class="metric-value" id="maxTemperature">—<small> °C</small></div><div class="metric-bottom"><span id="temperatureCount">192 / 240 kanal</span><span id="temperatureRange" class="muted">— °C spread</span></div></article>
+    </section>
+    <div class="source-profile" id="sourceProfile"></div><div class="record-ribbon" id="recordRibbon" hidden></div><div id="viewContent"></div>
+    <footer><span>ARJUNA <b>/</b> BMS COMMAND <span class="footer-version">v3.0</span></span><span>HMI monitoring · Proteksi & kendali akhir di firmware</span></footer>
+  </main>
+</div>
+<dialog id="connectionDialog"><form id="connectionForm">
+  <div class="dialog-title"><h2>Sumber data BMS</h2><button type="button" class="icon-button" data-close="connectionDialog" aria-label="Tutup koneksi">×</button></div>
+  <label class="field">Jenis koneksi<select id="transport"><option value="serial">USB serial · firmware STM</option><option value="stream">HTTP stream · NDJSON gateway</option><option value="poll">HTTP polling · JSON gateway</option></select></label>
+  <div id="networkFields" hidden><label class="field">URL telemetry<input id="endpoint" type="url" placeholder="https://gateway.example/api/stream"></label><label class="field">Bearer token <span class="muted">opsional · hanya di memori</span><input id="token" type="password" autocomplete="off"></label><label class="field" id="pollField" hidden>Interval permintaan<select id="pollInterval"><option value="1000">1000 ms</option><option value="100">100 ms</option><option value="50">50 ms</option><option value="20">20 ms</option><option value="10">10 ms</option></select></label></div>
+  <div id="serialFields"><label class="field">Profil firmware<select id="serialProfile"><option value="g474">BMS utama G474 · 112 sel dari kode lokal</option><option value="interface">InterfaceJOSJIS · 48 sel lokal</option></select></label><p id="serialProfileNote">G474: 1.000.000 baud; tabel debug harus aktif. Interface: 115200 baud. </p><p>Kedua profil memakai 8N1. Pilih profil yang sesuai firmware terpasang; jangan mencampurkan format log.</p><label class="check-field"><input type="checkbox" id="mapLocalCells"> Untuk InterfaceJOSJIS: petakan 48 sel lokal A ke C001–C048 jika sesuai wiring.</label><p class="hint">Aktifkan hanya jika mapping interface A sesuai wiring Anda. Tanpa pilihan ini, data tegangan disimpan di CSV sebagai kanal lokal A, dan slot pack tetap kosong.</p></div>
+  <p class="hint">Perekaman menyimpan setiap sampel baru. Layar diperbarui terpisah. Log STM belum menyediakan timestamp akuisisi, SOC, atau umur data sensor.</p>
+  <p id="connectionError" role="alert" class="error-text"></p><div class="dialog-actions"><button type="button" class="button" id="demoButton">Mode demo</button><button class="button primary" id="submitConnection" type="submit">Hubungkan</button></div>
+</form></dialog>
+<dialog id="cellDialog"><div id="cellDialogContent"></div></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
